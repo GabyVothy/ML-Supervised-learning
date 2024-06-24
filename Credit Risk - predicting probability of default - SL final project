@@ -1,25 +1,18 @@
-<font face="verdana" color="purple" size = 5>
-PROJECT INTRODUCTION
-</font>
 
-<font face="verdana" color="purple" size = 2>
+PROJECT INTRODUCTION
+
     In this project, using dataset public in HomeCredit competition for predictive default loan in credit risk. To understand better the background of this project, let's walk through this company profile and why they need to predict probability of default.
-    <br>
-    <br>
+
     Home Credit is a global consumer finance provider focusing on responsible lending to underbanked populations, leveraging technology for access to financial services. In other to reduce credit loss where customers are not able to pay back the loan, one of the methods is assessing customer's probability of default before granting certain loan amount or credit limit, via authorized data on the applicant. In this scope of project, will focus on Cash Loan product, which is to predict probability of default on applicant applying for a certain loan amount.
-    <br>
-    <br>
+
     For this problem of classification on whether or not customer will be default, supervised learning algorithm will be used with target to build main model using Logistic Regression. As requested in this scope of competition, AUC metric will be used to evaluate model's performance, with aim to achieve minimum 0.68. Additionally, AIC metric will also be used to measure model's goodness and complexity, in order to select most efficient model.
-    <br>
-    <br>
+
     For feature selection criteria, IV and WoE will be used to measure feature's importance, as well as p-value for feature significant.
-    <br>
-    <br>
-    Source of data reference: <br>
+
+    Source of data reference: 
     HOME CREDIT GROUP · FEATURED PREDICTION COMPETITION (2018)  · 
     https://www.kaggle.com/competitions/home-credit-default-risk/data
-    
-</font>
+
 
 #import necessary tools
 import pandas as pd
@@ -40,7 +33,7 @@ data_apptrain = pd.read_csv(path_apptrain, encoding='cp1252')
 data_apptest = pd.read_csv(path_apptest, encoding='cp1252')
 
 
-## 1. DATA EXPLORATION <br> 
+## 1. DATA EXPLORATION 
 
 
 data_apptrain.shape
@@ -828,17 +821,10 @@ plt.show()
    Above result proved that using model can help to improve default rate ~0.06%.
 
 
-<font face="verdana" color="purple" size = 5>
-<br>
-CONCLUSION
-</font>
 
-<font face="verdana" color="purple" size = 2>
+CONCLUSION
+
 Key take away from this project:
-    <br>
     1. Data cleaning, method of feature selection and feature engineering play important role in build a good model.
-    <br>
     2. Using model prediction can help to reduce ~0.06% default rate in this project scope.
-    <br>
     3. Recommend to also considering the increase in rejection rate when using model to predict, compare potential loss of interest rate from rejected incorrect predicted bad customer vs. saving loss from correct predicted bad customer, to decide model release to production.
-</font>
