@@ -3,12 +3,11 @@ PROJECT INTRODUCTION
 
     In this project, using dataset public in HomeCredit competition for predictive default loan in credit risk. To understand better the background of this project, let's walk through this company profile and why they need to predict probability of default.
     Home Credit is a global consumer finance provider focusing on responsible lending to underbanked populations, leveraging technology for access to financial services. In other to reduce credit loss where customers are not able to pay back the loan, one of the methods is assessing customer's probability of default before granting certain loan amount or credit limit, via authorized data on the applicant. In this scope of project, will focus on Cash Loan product, which is to predict probability of default on applicant applying for a certain loan amount.
-    For this problem of classification on whether or not customer will be default, supervised learning algorithm will be used with target to build main model using Logistic Regression. As requested in this scope of competition, AUC metric will be used to evaluate model's performance, with aim to achieve minimum 0.68. Additionally, AIC metric will also be used to measure model's goodness and complexity, in order to select most efficient model.
-    For feature selection criteria, IV and WoE will be used to measure feature's importance, as well as p-value for feature significant.
+    For this problem of classification on whether or not customer will be default, supervised learning algorithm will be used with target to build main model using Logistic Regression. As requested in this scope of competition, AUC metric will be used to evaluate model's performance, with aim to achieve minimum 0.68. Additionally, confusion matrix will also be used to measure model's prediction accuracy.
+    For feature selection criteria, IV and WoE will be used to measure feature's meaningful in model.
     Source of data reference: <br>
     HOME CREDIT GROUP · FEATURED PREDICTION COMPETITION (2018)  · 
     https://www.kaggle.com/competitions/home-credit-default-risk/data
-    
 
 #import necessary tools
 import pandas as pd
@@ -20,16 +19,16 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 #import data
-path_desc = '/11. Machine Learning/11.1 Intro to ML Supervised Learning/final project tips/dataset for project/HC data/HomeCredit_columns_description.csv'
-path_apptrain = '/11. Machine Learning/11.1 Intro to ML Supervised Learning/final project tips/dataset for project/HC data/application_train.csv'
-path_apptest = '/11. Machine Learning/11.1 Intro to ML Supervised Learning/final project tips/dataset for project/HC data/application_test.csv'
+path_desc = '/HomeCredit_columns_description.csv'
+path_apptrain = '/application_train.csv'
+path_apptest = '/application_test.csv'
 
 data_desc = pd.read_csv(path_desc, encoding='cp1252')
 data_apptrain = pd.read_csv(path_apptrain, encoding='cp1252')
 data_apptest = pd.read_csv(path_apptest, encoding='cp1252')
 
 
-## 1. DATA EXPLORATION <br> 
+## 1. DATA EXPLORATION 
 
 
 data_apptrain.shape
@@ -187,7 +186,7 @@ for b in boolean_list:
     print(df[b].value_counts())
     print('\n')
 
-### last look on missing data before moving to data analysis part
+#### last look on missing data before moving to data analysis part
 
 missing_inspection(df)
 
@@ -282,7 +281,7 @@ for i in cat_list[2:len(cat_list)]:
 
 from above visualization, we can detect some following highights:
 1. ORGANIZATION_TYPE has too many categories, will need to re-grouping into < 20 categories.
-2. INCOME, EDUCATION, OCCUPATION and CHILDREN shows most differentiate of default rate amonsgt the categories.
+2. INCOME, EDUCATION, OCCUPATION shows most differentiate of default rate amonsgt the categories.
 3. INCOME_TYPE suggests most vulnerable group (high default rate) is on UNEMPLOYED & MATERNITY LEAVE. However, these groups account small proportion in training population.
 4. EMPLOYED_PHONE presenting show higher default rate.
 5. LIVING or WORKING address different than PERMANENT address show higher default rate. These groups account small proportion in training population.
@@ -603,7 +602,7 @@ for i in inf_iv:
 
 
 In this scope of project, since there are too many variables can impact to model robust, threshold for IV value will be set at 0.05 to only allow fair predictive features. For feature has IV < 0.05 will be remove from final_features before fitting data to model.
-From above result, we can address the inf value caused from small group contain 0 data of good/bad record. Statistically, we can assume distribution of good/bad in these cases with small value 0.00000001. By that, selected feature based on correcting IV to be adding NAME_INCOME_TYPE with IV 0.06
+From above result, we can address the inf value caused from small group contain 0 data of good/bad record. Statistically, we can impute distribution value of good/bad in these cases with small value 0.00000001. By that, selected feature based on correcting IV to be adding NAME_INCOME_TYPE with IV 0.06
 
 #selecting feature has IV >= 0.1:
 final_feature = []
@@ -651,12 +650,11 @@ X_train_scaled = StandardScaler().fit_transform(X_train)
 X_test_scaled = StandardScaler().fit_transform(X_test)
 X_val_scaled = StandardScaler().fit_transform(X_val)
 
-model = LogisticRegression(random_state = 42, max_iter=1000) # Instantiate the model with balanced class_weight
+model = LogisticRegression(random_state = 42, max_iter=1000) # Instantiate the model 
 model.fit(X_train_scaled,y_train) # Fit the model using training set
 
 #have a look on current params
 model.get_params()
-
 
 ### 3.2 assessing base model:
 
@@ -690,7 +688,7 @@ plt.xlabel('False Positive Rate')
 plt.legend()
 plt.show() 
 
-We can see the model is fitting to fair AUC score above 0.7 with describe method above. This score is above the targeting benchmark of 0.68. However, let's also try to look on tuning param by GridSearchCV with standard fold = 5, to see if we can finetuning to any better performance.
+We can see the model is fitting to fair AUC score above 0.68 with describe method above. This score is above the targeting benchmark of 0.68. However, let's also try to look on tuning param by GridSearchCV with standard fold = 5, to see if we can finetuning to any better performance.
 
 ### 3.3 best model
 
@@ -752,7 +750,9 @@ plt.show()
 
 After param tuning, we observe no significant different between the base model using default value vs. tuning model using best_param. Therefore, we can interchangeably these 2 models. 
 
-This result likely happened when we did select proper set of feature through intensive analysis, careful feature engineering & feature scaling earlier, so that it contributes to learning progress initially, therefore the tuning param can help little on improving performance in Logistic Regression in binary class prediction.
+This result likely happened as encounter of data imbalance in training dataset, in which the bad sample presenting only 8.2%,which likely cause weak ability on learning this minority group.
+
+How to improve? we can consider to use sampling method to increase/decrese group of bad/good, to achieve more balance of data, which expect to improve the learning ability on bad group's features.
 
 To demonstrate the next analysis on predictive result using confusion matrix, as showing slightly improve comparing to base model, evaluation on result of best_model will be used.
 
@@ -773,13 +773,11 @@ axs[0].set(xticks=np.arange(cm_clf1.shape[1]),
            title='Confusion Matrix - test set',
            xlabel='Predicted label',
            ylabel='True label')
-plt.setp(axs[0].get_xticklabels(), rotation=45, ha="right",
-         rotation_mode="anchor")
+plt.setp(axs[0].get_xticklabels(), ha='right', rotation_mode= 'anchor')
 for i in range(cm_clf1.shape[0]):
     for j in range(cm_clf1.shape[1]):
-        axs[0].text(j, i, format(cm_clf1[i, j], 'd'),
-                    ha="center", va="center",
-                    color="white" if cm_clf1[i, j] > cm_clf1.max() / 2. else "black")
+        axs[0].text(j, i, format(cm_clf1[i, j], 'd'),ha='center', va='center',
+                    color='white' if cm_clf1[i, j] > cm_clf1.max() / 2. else 'black')
 
 # Plot confusion matrix for classifier 2
 axs[1].imshow(cm_clf2, cmap='Greens', interpolation='nearest')
@@ -789,19 +787,17 @@ axs[1].set(xticks=np.arange(cm_clf2.shape[1]),
            title='Confusion Matrix - Validation set',
            xlabel='Predicted label',
            ylabel='True label')
-plt.setp(axs[1].get_xticklabels(), rotation=45, ha="right",
-         rotation_mode="anchor")
+plt.setp(axs[1].get_xticklabels(),  ha='right',rotation_mode='anchor')
 for i in range(cm_clf2.shape[0]):
     for j in range(cm_clf2.shape[1]):
-        axs[1].text(j, i, format(cm_clf2[i, j], 'd'),
-                    ha="center", va="center",
-                    color="white" if cm_clf2[i, j] > cm_clf2.max() / 2. else "black")
+        axs[1].text(j, i, format(cm_clf2[i, j], 'd'), ha='center', va='center',
+                    color='white' if cm_clf2[i, j] > cm_clf2.max() / 2. else 'black')
 
 plt.tight_layout()
 plt.show()
 
 
-  let's have a quick analysis on test set & validation set to see how the model 
+  let's have a quick analysis on test set & validation set to see how the model contribute to business beneficial:
     
     1. TEST SET:
        - original default rate = true_bad / total sample = (5693 + 55) / 69558 = 0.08264
@@ -813,12 +809,10 @@ plt.show()
 
    Above result proved that using model can help to improve default rate ~0.06%.
 
-
 CONCLUSION
-
 Key take away from this project:
-    1. Data cleaning, method of feature selection and feature engineering play important role in build a good model.
+    1. Data cleaning, method of feature selection and feature engineering play important role in build a good model. Large dataset is valuable to build a robust model, showing consistence of AUC between testset & validation set.
     2. Using model prediction can help to reduce ~0.06% default rate in this project scope.
-    3. Recommend to also considering the increase in rejection rate when using model to predict, compare potential loss of interest rate from rejected incorrect predicted bad customer vs. saving loss from correct predicted bad customer, to decide model release to production.
+    3. As model improvement is not significant, with bad group accounts for 8.2% in training sample, we can identify that data is imbalance. Therefore, recommend to apply over/down-sampling method to balance data for better lerning ability on bad group.
 
 link to git: https://github.com/GabyVothy/ML-Supervised-learning
