@@ -1,13 +1,18 @@
 
 PROJECT INTRODUCTION
 
-    In this project, using dataset public in HomeCredit competition for predictive default loan in credit risk. To understand better the background of this project, let's walk through this company profile and why they need to predict probability of default.
-    Home Credit is a global consumer finance provider focusing on responsible lending to underbanked populations, leveraging technology for access to financial services. In other to reduce credit loss where customers are not able to pay back the loan, one of the methods is assessing customer's probability of default before granting certain loan amount or credit limit, via authorized data on the applicant. In this scope of project, will focus on Cash Loan product, which is to predict probability of default on applicant applying for a certain loan amount.
-    For this problem of classification on whether or not customer will be default, supervised learning algorithm will be used with target to build main model using Logistic Regression. As requested in this scope of competition, AUC metric will be used to evaluate model's performance, with aim to achieve minimum 0.68. Additionally, confusion matrix will also be used to measure model's prediction accuracy.
-    For feature selection criteria, IV and WoE will be used to measure feature's meaningful in model.
-    Source of data reference: <br>
+In this project, using dataset public in HomeCredit competition for predictive default loan in credit risk. To understand better the background of this project, let's walk through this company profile and why they need to predict probability of default.
+
+Home Credit is a global consumer finance provider focusing on responsible lending to underbanked populations, leveraging technology for access to financial services. In other to reduce credit loss where customers are not able to pay back the loan, one of the methods is assessing customer's probability of default before granting certain loan amount or credit limit, via authorized data on the applicant. In this scope of project, will focus on Cash Loan product, which is to predict probability of default on applicant applying for a certain loan amount.
+
+For this problem of classification on whether or not customer will be default, supervised learning algorithm will be used with target to build main model using Logistic Regression. As requested in this scope of competition, AUC metric will be used to evaluate model's performance, with aim to achieve minimum 0.68. Additionally, confusion matrix will also be used to measure model's prediction accuracy.
+
+For feature selection criteria, IV and WoE will be used to measure feature's meaningful in model.
+
+Source of data reference: 
     HOME CREDIT GROUP · FEATURED PREDICTION COMPETITION (2018)  · 
     https://www.kaggle.com/competitions/home-credit-default-risk/data
+    
 
 #import necessary tools
 import pandas as pd
@@ -28,7 +33,7 @@ data_apptrain = pd.read_csv(path_apptrain, encoding='cp1252')
 data_apptest = pd.read_csv(path_apptest, encoding='cp1252')
 
 
-## 1. DATA EXPLORATION 
+## 1. DATA EXPLORATION <br> 
 
 
 data_apptrain.shape
@@ -185,12 +190,6 @@ df['EMERGENCYSTATE_MODE'] = df['EMERGENCYSTATE_MODE'].map({'Yes':1,'No':0, 'unkn
 for b in boolean_list:
     print(df[b].value_counts())
     print('\n')
-
-#### last look on missing data before moving to data analysis part
-
-missing_inspection(df)
-
-all clean, now let's move to more interesting part: Data statistic and visualization. After this step, single data will be well understood and proper preparation for data transformation.
 
 ## 2. EXPLORATORY DATA ANALYSIS (EDA)
 
@@ -444,9 +443,6 @@ df['REGION_POPULATION_RELATIVE_BIN'].value_counts().sort_index(axis = 0)
 bin_list = [col for col in df.columns if '_BIN' in col] #update bin list to look on default rate
 
 Now let's have a look on the list of new bin to see association with default rate
-
-for col in bin_list:
-    plot_bar(df, col)
 
 for col in bin_list:
     plot_bar_target(df,col)
@@ -809,10 +805,15 @@ plt.show()
 
    Above result proved that using model can help to improve default rate ~0.06%.
 
+
 CONCLUSION
+
+
 Key take away from this project:
-    1. Data cleaning, method of feature selection and feature engineering play important role in build a good model. Large dataset is valuable to build a robust model, showing consistence of AUC between testset & validation set.
-    2. Using model prediction can help to reduce ~0.06% default rate in this project scope.
-    3. As model improvement is not significant, with bad group accounts for 8.2% in training sample, we can identify that data is imbalance. Therefore, recommend to apply over/down-sampling method to balance data for better lerning ability on bad group.
+    
+   1. Large dataset is valuable to build a robust model, showing consistence of AUC between test set & validation set.
+   2. Careful data cleaning and feature engineering can help to stack a good model.
+   3. Using model prediction can help to reduce ~0.06% default rate in this project scope. 
+   4. While large dataset is good, data imbalance between good/bad label reduces model improvement ability. Therefore, recommend to apply over/down-sampling method to balance data for better learning ability on bad group. 
 
 link to git: https://github.com/GabyVothy/ML-Supervised-learning
